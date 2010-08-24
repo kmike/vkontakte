@@ -38,12 +38,12 @@ def request(api_id, api_secret, method, timestamp=None, **kwargs):
 class API(object):
     def __init__(self, api_id, api_secret, **defaults):
         self.api_id = api_id
-        self.api_secert = api_secret
+        self.api_secret = api_secret
         self.defaults = defaults
 
     def get(self, method, **kwargs):
         assert kwargs.get('format', 'JSON') == 'JSON', 'Only JSON in supported'
-        response = request(self.api_id, self.api_secert, method, **kwargs)
+        response = request(self.api_id, self.api_secret, method, **kwargs)
         data = json.loads(response)
         if 'error' in data:
             raise VKError(data['error'])
