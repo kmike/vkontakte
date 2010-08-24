@@ -2,7 +2,7 @@
 vkontakte
 =========
 
-``vkontakte`` is an vk.com (aka vkontakte.ru, largest Russian social network)
+This is a vk.com (aka vkontakte.ru, largest Russian social network)
 python API wrapper. The goal is to support all API methods (current and future)
 that can be accessed from server.
 
@@ -17,6 +17,7 @@ Usage
 =====
 
 ::
+
     >>> import vkontakte
     >>> vk = vkontakte.API('my_api_id', 'my_api_secret')
     >>> print vk.getServerTime()
@@ -29,5 +30,4 @@ Usage
 
 All API methods should be supported.
 
-See http://vkontakte.ru/developers.php?o=-1&p=Описание+методов+API for detailed
-API help.
+See http://bit.ly/9Nzc8h for detailed API help.
