@@ -3,8 +3,8 @@ vkontakte
 =========
 
 ``vkontakte`` is an vk.com (aka vkontakte.ru, largest Russian social network)
-API wrapper. The goal is to support all API methods (current and future) that
-can be accessed from server.
+python API wrapper. The goal is to support all API methods (current and future)
+that can be accessed from server.
 
 Installation
 ============
