@@ -3,6 +3,9 @@ from __future__ import with_statement
 from contextlib import closing
 import httplib
 
+# urllib2 doesn't support timeouts for python 2.5 so
+# custom function is used for making http requests
+
 def post(url, data, headers, timeout):
     host_port = url.split('/')[2]
     timeout_set = False
