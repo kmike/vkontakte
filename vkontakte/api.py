@@ -11,6 +11,7 @@ except ImportError:
 from vkontakte import http
 
 API_URL = 'http://api.vk.com/api.php'
+DEFAULT_TIMEOUT = 1
 
 class VKError(Exception):
     __slots__ = ["code", "description", "params"]
@@ -25,7 +26,7 @@ def _sig(api_secret, **kwargs):
     params = "".join(["%s=%s" % (key, kwargs[key]) for key in keys])
     return md5(params+str(api_secret)).hexdigest()
 
-def request(api_id, api_secret, method, timestamp=None, timeout = 1, **kwargs):
+def request(api_id, api_secret, method, timestamp=None, timeout=DEFAULT_TIMEOUT, **kwargs):
     params = dict(
         api_id = str(api_id),
         method = method,
@@ -50,7 +51,7 @@ class API(object):
         self.api_secret = api_secret
         self.defaults = defaults
 
-    def get(self, method, timeout = 1, **kwargs):
+    def get(self, method, timeout=DEFAULT_TIMEOUT, **kwargs):
         status, response = request(self.api_id, self.api_secret, method, timeout = timeout, **kwargs)
         if not (status >= 200 and status <= 299):
             raise VKError(status, "HTTP error", kwargs)
