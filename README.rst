@@ -28,6 +28,11 @@ Usage
     >>> print pavel['last_name'], pavel['university_name']
     Дуров СПбГУ
 
+    >>> # custom timeout example (default timeout = 1s)
+    >>> vk = vkontakte.API('my_api_id', 'my_api_secret', timeout=5)
+    >>> print vk.getAppBalance()
+    0
+
 All API methods should be supported.
 
 See http://bit.ly/9Nzc8h for detailed API help.
