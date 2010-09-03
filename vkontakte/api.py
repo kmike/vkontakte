@@ -29,7 +29,7 @@ def _to_utf8(s):
 
 def signature(api_secret, params):
     keys = sorted(params.keys())
-    param_str = "".join(["%s=%s" % (key, _to_utf8(params[key])) for key in keys])
+    param_str = "".join(["%s=%s" % (str(key), _to_utf8(params[key])) for key in keys])
     return md5(param_str+str(api_secret)).hexdigest()
 
 def _sig(api_secret, **kwargs):
