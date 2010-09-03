@@ -2,6 +2,7 @@
 import random
 import time
 import urllib
+import warnings
 from hashlib import md5
 from functools import partial
 try:
@@ -21,10 +22,21 @@ class VKError(Exception):
     def __str__(self):
         return "Error(code = '%s', description = '%s', params = '%s')" % (self.code, self.description, self.params)
 
+def _to_utf8(s):
+    if isinstance(s, unicode):
+        return s.encode('utf8')
+    return s # this can be number, etc.
+
+def signature(api_secret, params):
+    keys = sorted(params.keys())
+    param_str = "".join(["%s=%s" % (key, _to_utf8(params[key])) for key in keys])
+    return md5(param_str+str(api_secret)).hexdigest()
+
 def _sig(api_secret, **kwargs):
-    keys = sorted(kwargs.keys())
-    params = "".join(["%s=%s" % (key, kwargs[key]) for key in keys])
-    return md5(params+str(api_secret)).hexdigest()
+    msg = 'vkontakte.api._sig is deprecated and will be removed. Please use `vkontakte.signature`'
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
+    return signature(api_secret, kwargs)
+
 
 def request(api_id, api_secret, method, timestamp=None, timeout=DEFAULT_TIMEOUT, **kwargs):
     params = dict(
@@ -36,7 +48,7 @@ def request(api_id, api_secret, method, timestamp=None, timeout=DEFAULT_TIMEOUT,
         timestamp = timestamp or int(time.time())
     )
     params.update(kwargs)
-    params['sig'] = _sig(api_secret, **params)
+    params['sig'] = signature(api_secret, params)
     data = urllib.urlencode(params)
 
     # urllib2 doesn't support timeouts for python 2.5 so
