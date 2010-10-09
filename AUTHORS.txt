@@ -2,4 +2,4 @@ Authors
 =======
 
 * Mikhail Korobov <kmike84@gmail.com>
-* Moriarty
+* Morarenko Kirill <m0riarty@ya.ru>
