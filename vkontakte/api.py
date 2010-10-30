@@ -62,6 +62,7 @@ class API(object):
         self.api_id = api_id
         self.api_secret = api_secret
         self.defaults = defaults
+        self.method_prefix = ''
 
     def get(self, method, timeout=DEFAULT_TIMEOUT, **kwargs):
         status, response = request(self.api_id, self.api_secret, method, timeout = timeout, **kwargs)
@@ -73,13 +74,20 @@ class API(object):
             raise VKError(data["error"]["error_code"], data["error"]["error_msg"], data["error"]["request_params"])
         return data['response']
 
-    # some magic to convert instance attributes into method names
     def __getattr__(self, name):
+
+        # support for api.secure.<methodName> syntax
+        if (name=='secure'):
+            api = API(self.api_id, self.api_secret, **self.defaults)
+            api.method_prefix = 'secure.'
+            return api
+
+        # the magic to convert instance attributes into method names
         return partial(self, method=name)
 
     def __call__(self, **kwargs):
         method = kwargs.pop('method')
         params = self.defaults.copy()
         params.update(kwargs)
-        return self.get(method, **params)
+        return self.get(self.method_prefix + method, **params)
 

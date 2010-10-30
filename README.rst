@@ -28,11 +28,21 @@ Usage
     >>> print pavel['last_name'], pavel['university_name']
     Дуров СПбГУ
 
+    >>> # alternative syntax
+    >>> profiles = vk.get('getProfiles', uids='1,2', fields='education')
+    >>> pavel = profiles[0]
+    >>> print pavel['last_name'], pavel['university_name']
+    Дуров СПбГУ
+
     >>> # custom timeout example (default timeout = 1s)
     >>> vk = vkontakte.API('my_api_id', 'my_api_secret', timeout=5)
-    >>> print vk.getAppBalance()
-    0
+    >>> print vk.getServerTime()
+    1282689362
 
-All API methods should be supported.
+    >>> # syntax sugar for 'secure.*' methods
+    >>> print vk.secure.getSMSHistory()
+    None
+
+All API methods that can be called from server should be supported.
 
 See http://bit.ly/9Nzc8h for detailed API help.

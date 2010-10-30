@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from distutils.core import setup
 
-version='0.9.4.1'
+version='0.9.5'
 
 setup(
     name='vkontakte',
@@ -12,7 +12,7 @@ setup(
     packages=['vkontakte'],
 
     url='http://bitbucket.org/kmike/vkontakte/',
-    download_url = 'http://bitbucket.org/kmike/vkontakte/get/tip.zip',
+    download_url = 'http://bitbucket.org/kmike/vkontakte/get/tip.gz',
     license = 'MIT license',
     description = "vk.com (aka vkontakte.ru) API wrapper",
 
