@@ -6,14 +6,15 @@ import httplib
 # urllib2 doesn't support timeouts for python 2.5 so
 # custom function is used for making http requests
 
-def post(url, data, headers, timeout):
+def post(url, data, headers, timeout, secure=False):
     host_port = url.split('/')[2]
     timeout_set = False
+    connection = httplib.HTTPSConnection if secure else httplib.HTTPConnection
     try:
-        connection = httplib.HTTPConnection(host_port, timeout = timeout)
+        connection = connection(host_port, timeout = timeout)
         timeout_set = True
     except TypeError:
-        connection = httplib.HTTPConnection(host_port)
+        connection = connection(host_port)
 
     with closing(connection):
         if not timeout_set:

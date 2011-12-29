@@ -23,6 +23,10 @@ Usage
     >>> print vk.getServerTime()
     1282689362
 
+    >>> vk = vkontakte.API(token='my_access_token')
+    >>> print vk.getServerTime()
+    1282689362
+
     >>> profiles = vk.getProfiles(uids='1,2', fields='education')
     >>> pavel = profiles[0]
     >>> print pavel['last_name'], pavel['university_name']
@@ -46,3 +50,5 @@ Usage
 All API methods that can be called from server should be supported.
 
 See http://bit.ly/9Nzc8h for detailed API help.
+
+OAuth2 access_token is supported (docs are here http://vkontakte.ru/developers.php?oid=-1&p=Авторизация)

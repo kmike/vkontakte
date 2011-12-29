@@ -12,6 +12,7 @@ except ImportError:
 from vkontakte import http
 
 API_URL = 'http://api.vk.com/api.php'
+SECURE_API_URL = 'https://api.vkontakte.ru/method/'
 DEFAULT_TIMEOUT = 1
 
 class VKError(Exception):
@@ -32,41 +33,28 @@ def signature(api_secret, params):
     param_str = "".join(["%s=%s" % (str(key), _to_utf8(params[key])) for key in keys])
     return md5(param_str+str(api_secret)).hexdigest()
 
-def _sig(api_secret, **kwargs):
-    msg = 'vkontakte.api._sig is deprecated and will be removed. Please use `vkontakte.signature`'
-    warnings.warn(msg, DeprecationWarning, stacklevel=2)
-    return signature(api_secret, kwargs)
-
-
 def request(api_id, api_secret, method, timestamp=None, timeout=DEFAULT_TIMEOUT, **kwargs):
-    params = dict(
-        api_id = str(api_id),
-        method = method,
-        format = 'JSON',
-        v = '3.0',
-        random = random.randint(0, 2**30),
-        timestamp = timestamp or int(time.time())
-    )
-    params.update(kwargs)
-    params['sig'] = signature(api_secret, params)
-    data = urllib.urlencode(params)
-
-    # urllib2 doesn't support timeouts for python 2.5 so
-    # custom function is used for making http requests
-    headers = {"Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"}
-    return http.post(API_URL, data, headers, timeout)
+    msg = 'vkontakte.api.request is deprecated and will be removed. Please use `API` class.'
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
+    api = API(api_id, api_secret)
+    return api._request(method, timeout=timeout, **kwargs)
 
 
 class API(object):
-    def __init__(self, api_id, api_secret, **defaults):
+    def __init__(self, api_id=None, api_secret=None, token=None, **defaults):
+
+        if not (api_id and api_secret or token):
+            raise ValueError("Arguments api_id and api_secret or token are required")
+
         self.api_id = api_id
         self.api_secret = api_secret
+        self.token = token
         self.defaults = defaults
         self.method_prefix = ''
 
     def get(self, method, timeout=DEFAULT_TIMEOUT, **kwargs):
-        status, response = request(self.api_id, self.api_secret, method, timeout = timeout, **kwargs)
-        if not (status >= 200 and status <= 299):
+        status, response = self._request(method, timeout=timeout, **kwargs)
+        if not (200 <= status <= 299):
             raise VKError(status, "HTTP error", kwargs)
 
         data = json.loads(response)
@@ -75,11 +63,12 @@ class API(object):
         return data['response']
 
     def __getattr__(self, name):
-
-        # support for api.secure.<methodName> syntax
-        if (name=='secure'):
-            api = API(self.api_id, self.api_secret, **self.defaults)
-            api.method_prefix = 'secure.'
+        '''
+        Support for api.<method>.<methodName> syntax
+        '''
+        if name in ['secure', 'ads']:
+            api = API(api_id=self.api_id, api_secret=self.api_secret, token=self.token, **self.defaults)
+            api.method_prefix = name + '.'
             return api
 
         # the magic to convert instance attributes into method names
@@ -91,3 +80,36 @@ class API(object):
         params.update(kwargs)
         return self.get(self.method_prefix + method, **params)
 
+    def _signature(self, params):
+        return signature(self.api_secret, params)
+
+    def _request(self, method, timeout=DEFAULT_TIMEOUT, **kwargs):
+
+        if self.token:
+            # http://vkontakte.ru/developers.php?oid=-1&p=Выполнение_запросов_к_API
+            params = dict(
+                access_token = self.token
+            )
+            params.update(kwargs)
+            url = SECURE_API_URL + method
+            secure = True
+        else:
+            # http://vkontakte.ru/developers.php?oid=-1&p=Взаимодействие_приложения_с_API
+            params = dict(
+                api_id = str(self.api_id),
+                method = method,
+                format = 'JSON',
+                v = '3.0',
+                random = random.randint(0, 2**30),
+            )
+            params.update(kwargs)
+            params['sig'] = self._signature(params)
+            url = API_URL
+            secure = False
+        params['timestamp'] = int(time.time())
+        data = urllib.urlencode(params)
+        headers = {"Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"}
+
+        # urllib2 doesn't support timeouts for python 2.5 so
+        # custom function is used for making http requests
+        return http.post(url, data, headers, timeout, secure=secure)

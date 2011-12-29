@@ -3,3 +3,4 @@ Authors
 
 * Mikhail Korobov <kmike84@gmail.com>
 * Morarenko Kirill <m0riarty@ya.ru>
+* ramusus <ramusus@gmail.com>
