@@ -88,9 +88,10 @@ class API(object):
         if self.token:
             # http://vkontakte.ru/developers.php?oid=-1&p=Выполнение_запросов_к_API
             params = dict(
-                access_token = self.token
+                access_token = self.token,
             )
             params.update(kwargs)
+            params['timestamp'] = int(time.time())
             url = SECURE_API_URL + method
             secure = True
         else:
@@ -103,10 +104,10 @@ class API(object):
                 random = random.randint(0, 2**30),
             )
             params.update(kwargs)
+            params['timestamp'] = int(time.time())
             params['sig'] = self._signature(params)
             url = API_URL
             secure = False
-        params['timestamp'] = int(time.time())
         data = urllib.urlencode(params)
         headers = {"Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"}
 
