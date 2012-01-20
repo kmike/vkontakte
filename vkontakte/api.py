@@ -2,7 +2,6 @@
 import random
 import time
 import urllib
-import warnings
 from hashlib import md5
 from functools import partial
 try:
@@ -41,13 +40,6 @@ def signature(api_secret, params):
     keys = sorted(params.keys())
     param_str = "".join(["%s=%s" % (str(key), _to_utf8(params[key])) for key in keys])
     return md5(param_str + str(api_secret)).hexdigest()
-
-def request(api_id, api_secret, method, timestamp=None, timeout=DEFAULT_TIMEOUT, **kwargs):
-    msg = 'vkontakte.api.request is deprecated and will be removed. Please use `API` class.'
-    warnings.warn(msg, DeprecationWarning, stacklevel=2)
-    api = API(api_id, api_secret)
-    return api._request(method, timeout=timeout, **kwargs)
-
 
 # We have to support this:
 #
