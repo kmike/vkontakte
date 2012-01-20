@@ -49,7 +49,15 @@ def request(api_id, api_secret, method, timestamp=None, timeout=DEFAULT_TIMEOUT,
     return api._request(method, timeout=timeout, **kwargs)
 
 
-class API(object):
+# We have to support this:
+#
+#   >>> vk = API(key, secret)
+#   >>> vk.get('getServerTime')  # "get" is a method of API class
+#   >>> vk.friends.get(uid=123)  # "get" is a part of vkontakte method name
+#
+# It works this way: API class has 'get' method but _API class doesn't.
+
+class _API(object):
     def __init__(self, api_id=None, api_secret=None, token=None, **defaults):
 
         if not (api_id and api_secret or token):
@@ -61,7 +69,7 @@ class API(object):
         self.defaults = defaults
         self.method_prefix = ''
 
-    def get(self, method, timeout=DEFAULT_TIMEOUT, **kwargs):
+    def _get(self, method, timeout=DEFAULT_TIMEOUT, **kwargs):
         status, response = self._request(method, timeout=timeout, **kwargs)
         if not (200 <= status <= 299):
             raise VKError(status, "HTTP error", kwargs)
@@ -76,7 +84,7 @@ class API(object):
         Support for api.<method>.<methodName> syntax
         '''
         if name in COMPLEX_METHODS:
-            api = API(api_id=self.api_id, api_secret=self.api_secret, token=self.token, **self.defaults)
+            api = _API(api_id=self.api_id, api_secret=self.api_secret, token=self.token, **self.defaults)
             api.method_prefix = name + '.'
             return api
 
@@ -87,7 +95,7 @@ class API(object):
         method = kwargs.pop('method')
         params = self.defaults.copy()
         params.update(kwargs)
-        return self.get(self.method_prefix + method, **params)
+        return self._get(self.method_prefix + method, **params)
 
     def _signature(self, params):
         return signature(self.api_secret, params)
@@ -123,3 +131,9 @@ class API(object):
         # urllib2 doesn't support timeouts for python 2.5 so
         # custom function is used for making http requests
         return http.post(url, data, headers, timeout, secure=secure)
+
+
+class API(_API):
+
+    def get(self, method, timeout=DEFAULT_TIMEOUT, **kwargs):
+        return self._get(method, timeout, **kwargs)
