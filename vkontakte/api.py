@@ -13,6 +13,7 @@ from vkontakte import http
 API_URL = 'http://api.vk.com/api.php'
 SECURE_API_URL = 'https://api.vkontakte.ru/method/'
 DEFAULT_TIMEOUT = 1
+REQUEST_ENCODING = 'utf8'
 
 
 # See full list of VK API methods here:
@@ -31,14 +32,9 @@ class VKError(Exception):
     def __str__(self):
         return "Error(code = '%s', description = '%s', params = '%s')" % (self.code, self.description, self.params)
 
-def _to_utf8(s):
-    if isinstance(s, unicode):
-        return s.encode('utf8')
-    return s # this can be number, etc.
-
 def signature(api_secret, params):
     keys = sorted(params.keys())
-    param_str = "".join(["%s=%s" % (str(key), _to_utf8(params[key])) for key in keys])
+    param_str = "".join(["%s=%s" % (str(key), params[key]) for key in keys])
     return md5(param_str + str(api_secret)).hexdigest()
 
 # We have to support this:
@@ -93,6 +89,10 @@ class _API(object):
         return signature(self.api_secret, params)
 
     def _request(self, method, timeout=DEFAULT_TIMEOUT, **kwargs):
+            
+        for key, value in kwargs.iteritems():
+            if isinstance(value, unicode):
+                kwargs[key] = value.encode(REQUEST_ENCODING)
 
         if self.token:
             # http://vkontakte.ru/developers.php?oid=-1&p=Выполнение_запросов_к_API
