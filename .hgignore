@@ -14,6 +14,7 @@ syntax: glob
 
 #misc files
 pip-log.txt
+.tox
 
 #os files
 .DS_Store
