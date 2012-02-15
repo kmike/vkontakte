@@ -22,6 +22,15 @@ class VkontakteTest(unittest.TestCase):
         self.assertRaises(ValueError, lambda: vkontakte.API())
 
 
+class SignatureTest(unittest.TestCase):
+    def test_signature_supports_unicode(self):
+        params = {'foo': u'клен'}
+        self.assertEqual(
+            vkontakte.signature(API_SECRET, params),
+            '560b3f1e09ff65167b8dc211604fed2b'
+        )
+
+
 class VkontakteMagicTest(unittest.TestCase):
 
     def setUp(self):
