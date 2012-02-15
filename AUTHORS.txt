@@ -5,3 +5,4 @@ Authors
 * Morarenko Kirill <m0riarty@ya.ru>
 * ramusus <ramusus@gmail.com>
 * Alex Kamedov (http://kamedov.ru)
+* Pyotr Yermishkin <quasiyoke@gmail.com>
