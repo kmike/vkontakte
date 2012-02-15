@@ -73,5 +73,13 @@ class VkontakteMagicTest(unittest.TestCase):
         _get.assert_called_once_with('friends.get', uid=642177)
 
 
+    @mock.patch('vkontakte.http.post')
+    def test_urlencode_bug(self, post):
+        post.return_value = 200, '{"response":123}'
+        res = self.api.search(q=u'клен')
+        self.assertEqual(res, 123)
+
+
+
 if __name__ == '__main__':
     unittest.main()
