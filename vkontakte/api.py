@@ -2,6 +2,7 @@
 import random
 import time
 import urllib
+import re
 from hashlib import md5
 from functools import partial
 try:
@@ -123,6 +124,11 @@ class _API(object):
             url = API_URL
             secure = False
         data = urllib.urlencode(params)
+
+        # replace single quotes with double quotes for nested dictionaries.
+        # because right JSON format is necessary by php server-side parser of API requests
+        data = re.sub(r'%27(.?)%27(%2C|%7D)', r'%22\1%22\2', data)
+        data = re.sub(r'%27(.+?)%27%3A', r'%22\1%22%3A', data)
         headers = {"Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"}
 
         # urllib2 doesn't support timeouts for python 2.5 so

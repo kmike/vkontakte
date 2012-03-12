@@ -7,6 +7,7 @@ Requires mock >= 0.7.2.
 
 import os
 import sys
+import urllib
 sys.path.insert(0, os.path.abspath('..'))
 
 import unittest
@@ -21,7 +22,6 @@ class VkontakteTest(unittest.TestCase):
     def test_api_creation_error(self):
         self.assertRaises(ValueError, lambda: vkontakte.API())
 
-
 class SignatureTest(unittest.TestCase):
     def test_signature_supports_unicode(self):
         params = {'foo': u'клен'}
@@ -29,7 +29,6 @@ class SignatureTest(unittest.TestCase):
             vkontakte.signature(API_SECRET, params),
             '560b3f1e09ff65167b8dc211604fed2b'
         )
-
 
 class VkontakteMagicTest(unittest.TestCase):
 
@@ -81,14 +80,17 @@ class VkontakteMagicTest(unittest.TestCase):
         self.assertEqual(res, 'foo')
         _get.assert_called_once_with('friends.get', uid=642177)
 
-
     @mock.patch('vkontakte.http.post')
     def test_urlencode_bug(self, post):
         post.return_value = 200, '{"response":123}'
         res = self.api.search(q=u'клен')
         self.assertEqual(res, 123)
 
-
+    @mock.patch('vkontakte.http.post')
+    def test_valid_quoted_json(self, post):
+        post.return_value = 200, '{"response": 123}'
+        self.api.ads.getStat(data={'type': '1', 'id': 1})
+        self.assertTrue('data={"type":+"1",+"id":+1}' in urllib.unquote(post.call_args[0][1]))
 
 if __name__ == '__main__':
     unittest.main()
