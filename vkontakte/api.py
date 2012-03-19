@@ -39,15 +39,15 @@ class VKError(Exception):
         Exception.__init__(self, str(self))
 
     def _code(self):
-        return self.error['code']
+        return self.error['error_code']
     code = property(_code)
 
     def _description(self):
-        return self.error['description']
+        return self.error['error_msg']
     description = property(_description)
 
     def _params(self):
-        return self.error['params']
+        return self.error['request_params']
     params = property(_params)
 
     def __str__(self):
