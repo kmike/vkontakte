@@ -32,9 +32,9 @@ class VKError(Exception):
             self.error = code
         else:
             self.error = {
-                'code': code,
-                'description': description,
-                'params': params,
+                'error_code': code,
+                'error_msg': description,
+                'request_params': params,
             }
         Exception.__init__(self, str(self))
 
