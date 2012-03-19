@@ -26,10 +26,30 @@ COMPLEX_METHODS = ['secure', 'ads', 'messages', 'likes', 'friends',
 
 
 class VKError(Exception):
-    __slots__ = ["code", "description", "params"]
-    def __init__(self, code, description, params):
-        self.code, self.description, self.params = (code, description, params)
+    __slots__ = ["error"]
+    def __init__(self, code, description=None, params=None):
+        if isinstance(code, dict):
+            self.error = code
+        else:
+            self.error = {
+                'code': code,
+                'description': description,
+                'params': params,
+            }
         Exception.__init__(self, str(self))
+
+    def _code(self):
+        return self.error['code']
+    code = property(_code)
+
+    def _description(self):
+        return self.error['description']
+    description = property(_description)
+
+    def _params(self):
+        return self.error['params']
+    params = property(_params)
+
     def __str__(self):
         return "Error(code = '%s', description = '%s', params = '%s')" % (self.code, self.description, self.params)
 
@@ -71,7 +91,7 @@ class _API(object):
 
         data = json.loads(response)
         if "error" in data:
-            raise VKError(data["error"]["error_code"], data["error"]["error_msg"], data["error"]["request_params"])
+            raise VKError(data["error"])
         return data['response']
 
     def __getattr__(self, name):
