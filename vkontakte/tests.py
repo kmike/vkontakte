@@ -90,7 +90,8 @@ class VkontakteMagicTest(unittest.TestCase):
     def test_valid_quoted_json(self, post):
         post.return_value = 200, '{"response": 123}'
         self.api.ads.getStat(data={'type': '1', 'id': 1})
-        self.assertTrue('data={"type":+"1",+"id":+1}' in urllib.unquote(post.call_args[0][1]))
+        posted_data = urllib.unquote(post.call_args[0][1])
+        self.assertTrue('data={"type":+"1",+"id":+1}' in posted_data, posted_data)
 
 if __name__ == '__main__':
     unittest.main()

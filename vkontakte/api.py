@@ -33,15 +33,19 @@ class VKError(Exception):
     def __str__(self):
         return "Error(code = '%s', description = '%s', params = '%s')" % (self.code, self.description, self.params)
 
-def _to_request_encoding(s):
+def _encode(s):
     if isinstance(s, unicode):
         return s.encode(REQUEST_ENCODING)
+
+    if isinstance(s, (dict, list, tuple)):
+        return json.dumps(s, ensure_ascii=False, encoding=REQUEST_ENCODING)
+
     return s # this can be number, etc.
 
 
 def signature(api_secret, params):
     keys = sorted(params.keys())
-    param_str = "".join(["%s=%s" % (str(key), _to_request_encoding(params[key])) for key in keys])
+    param_str = "".join(["%s=%s" % (str(key), _encode(params[key])) for key in keys])
     return md5(param_str + str(api_secret)).hexdigest()
 
 # We have to support this:
@@ -98,7 +102,7 @@ class _API(object):
     def _request(self, method, timeout=DEFAULT_TIMEOUT, **kwargs):
 
         for key, value in kwargs.iteritems():
-            kwargs[key] = _to_request_encoding(value)
+            kwargs[key] = _encode(value)
 
         if self.token:
             # http://vkontakte.ru/developers.php?oid=-1&p=Выполнение_запросов_к_API
@@ -125,11 +129,8 @@ class _API(object):
             secure = False
         data = urllib.urlencode(params)
 
-        # replace single quotes with double quotes for nested dictionaries.
-        # because right JSON format is necessary by php server-side parser of API requests
-        data = re.sub(r'%27(.?)%27(%2C|%7D)', r'%22\1%22\2', data)
-        data = re.sub(r'%27(.+?)%27%3A', r'%22\1%22%3A', data)
-        headers = {"Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"}
+        headers = {"Accept": "application/json",
+                   "Content-Type": "application/x-www-form-urlencoded"}
 
         # urllib2 doesn't support timeouts for python 2.5 so
         # custom function is used for making http requests
