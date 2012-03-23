@@ -27,28 +27,21 @@ COMPLEX_METHODS = ['secure', 'ads', 'messages', 'likes', 'friends',
 
 class VKError(Exception):
     __slots__ = ["error"]
-    def __init__(self, code, description=None, params=None):
-        if isinstance(code, dict):
-            self.error = code
-        else:
-            self.error = {
-                'error_code': code,
-                'error_msg': description,
-                'request_params': params,
-            }
+    def __init__(self, error_data):
+        self.error = error_data
         Exception.__init__(self, str(self))
 
-    def _code(self):
+    @property
+    def code(self):
         return self.error['error_code']
-    code = property(_code)
 
-    def _description(self):
+    @property
+    def description(self):
         return self.error['error_msg']
-    description = property(_description)
 
-    def _params(self):
+    @property
+    def params(self):
         return self.error['request_params']
-    params = property(_params)
 
     def __str__(self):
         return "Error(code = '%s', description = '%s', params = '%s')" % (self.code, self.description, self.params)
@@ -87,7 +80,11 @@ class _API(object):
     def _get(self, method, timeout=DEFAULT_TIMEOUT, **kwargs):
         status, response = self._request(method, timeout=timeout, **kwargs)
         if not (200 <= status <= 299):
-            raise VKError(status, "HTTP error", kwargs)
+            raise VKError({
+                'error_code': status,
+                'error_msg': "HTTP error",
+                'request_params': kwargs,
+                })
 
         data = json.loads(response)
         if "error" in data:
