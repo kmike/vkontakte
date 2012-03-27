@@ -26,10 +26,23 @@ COMPLEX_METHODS = ['secure', 'ads', 'messages', 'likes', 'friends',
 
 
 class VKError(Exception):
-    __slots__ = ["code", "description", "params"]
-    def __init__(self, code, description, params):
-        self.code, self.description, self.params = (code, description, params)
+    __slots__ = ["error"]
+    def __init__(self, error_data):
+        self.error = error_data
         Exception.__init__(self, str(self))
+
+    @property
+    def code(self):
+        return self.error['error_code']
+
+    @property
+    def description(self):
+        return self.error['error_msg']
+
+    @property
+    def params(self):
+        return self.error['request_params']
+
     def __str__(self):
         return "Error(code = '%s', description = '%s', params = '%s')" % (self.code, self.description, self.params)
 
@@ -71,11 +84,15 @@ class _API(object):
     def _get(self, method, timeout=DEFAULT_TIMEOUT, **kwargs):
         status, response = self._request(method, timeout=timeout, **kwargs)
         if not (200 <= status <= 299):
-            raise VKError(status, "HTTP error", kwargs)
+            raise VKError({
+                'error_code': status,
+                'error_msg': "HTTP error",
+                'request_params': kwargs,
+                })
 
         data = json.loads(response)
         if "error" in data:
-            raise VKError(data["error"]["error_code"], data["error"]["error_msg"], data["error"]["request_params"])
+            raise VKError(data["error"])
         return data['response']
 
     def __getattr__(self, name):

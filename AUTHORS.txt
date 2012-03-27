@@ -6,3 +6,4 @@ Authors
 * ramusus <ramusus@gmail.com>
 * Alex Kamedov (http://kamedov.ru)
 * Pyotr Yermishkin <quasiyoke@gmail.com>
+* Valentin Gorbunov <valuerr@gmail.com>

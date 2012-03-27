@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from distutils.core import setup
 
-version='1.2.2'
+version='1.3.0'
 
 setup(
     name='vkontakte',
