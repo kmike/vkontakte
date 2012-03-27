@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from distutils.core import setup
 
-version='1.3.0'
+version='1.3'
 
 setup(
     name='vkontakte',
@@ -12,11 +12,10 @@ setup(
     packages=['vkontakte'],
 
     url='http://bitbucket.org/kmike/vkontakte/',
-    download_url = 'http://bitbucket.org/kmike/vkontakte/get/tip.gz',
     license = 'MIT license',
     description = "vk.com (aka vkontakte.ru) API wrapper",
 
-    long_description = open('README.rst').read(),
+    long_description = open('README.rst').read() + open('CHANGES.rst').read(),
 
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -25,6 +24,10 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.5',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
 )

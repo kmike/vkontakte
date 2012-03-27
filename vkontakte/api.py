@@ -88,7 +88,7 @@ class _API(object):
                 'error_code': status,
                 'error_msg': "HTTP error",
                 'request_params': kwargs,
-                })
+            })
 
         data = json.loads(response)
         if "error" in data:
