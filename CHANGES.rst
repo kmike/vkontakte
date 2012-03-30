@@ -46,5 +46,5 @@ Changes
 * timeout support
 
 0.9.1 (2010-08-25)
-----------------
+------------------
 Initial release.
