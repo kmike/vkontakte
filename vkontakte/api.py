@@ -90,7 +90,7 @@ class _API(object):
                 'request_params': kwargs,
             })
 
-        data = json.loads(response)
+        data = json.loads(response, strict=False)
         if "error" in data:
             raise VKError(data["error"])
         return data['response']
