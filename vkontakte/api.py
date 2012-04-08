@@ -47,11 +47,11 @@ class VKError(Exception):
         return "Error(code = '%s', description = '%s', params = '%s')" % (self.code, self.description, self.params)
 
 def _encode(s):
-    if isinstance(s, unicode):
-        return s.encode(REQUEST_ENCODING)
-
     if isinstance(s, (dict, list, tuple)):
-        return json.dumps(s, ensure_ascii=False, encoding=REQUEST_ENCODING)
+        s = json.dumps(s, ensure_ascii=False, encoding=REQUEST_ENCODING)
+
+    if isinstance(s, unicode):
+        s = s.encode(REQUEST_ENCODING)
 
     return s # this can be number, etc.
 
