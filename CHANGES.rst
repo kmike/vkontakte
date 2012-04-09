@@ -2,6 +2,12 @@
 Changes
 =======
 
+1.3.1 (2012-04-09)
+------------------
+
+* don't raise an exception on json with control characters from vkontakte;
+* properly encode request parameters after dumping them to json format.
+
 1.3 (2012-03-27)
 ----------------
 
