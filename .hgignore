@@ -11,6 +11,7 @@ syntax: glob
 *.pyo
 *.orig
 *~
+stuff/
 
 #misc files
 pip-log.txt

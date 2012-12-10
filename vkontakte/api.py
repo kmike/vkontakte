@@ -2,13 +2,13 @@
 import random
 import time
 import urllib
-import re
+import warnings
 from hashlib import md5
 from functools import partial
 try:
-    import json
-except ImportError:
     import simplejson as json
+except ImportError:
+    import json
 from vkontakte import http
 
 API_URL = 'http://api.vk.com/api.php'
@@ -57,6 +57,13 @@ def _encode(s):
 
     return s # this can be number, etc.
 
+def _json_iterparse(response):
+    response = response.strip()
+    decoder = json.JSONDecoder(encoding="utf8", strict=False)
+    idx = 0
+    while idx < len(response):
+        obj, idx = decoder.raw_decode(response, idx)
+        yield obj
 
 def signature(api_secret, params):
     keys = sorted(params.keys())
@@ -92,10 +99,17 @@ class _API(object):
                 'request_params': kwargs,
             })
 
-        data = json.loads(response, strict=False)
-        if "error" in data:
-            raise VKError(data["error"])
-        return data['response']
+        # there may be a response after errors
+        errors = []
+        for data in _json_iterparse(response):
+            if "error" in data:
+                errors.append(data["error"])
+            if "response" in data:
+                for error in errors:
+                    warnings.warn("%s" % error)
+                return data["response"]
+
+        raise VKError(errors[0])
 
     def __getattr__(self, name):
         '''

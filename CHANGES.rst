@@ -2,6 +2,14 @@
 Changes
 =======
 
+dev (TBA)
+---------
+
+* bugfix for breaking vkontakte API updates.
+
+``simplejson`` is now required under python 2.6 (it was previously
+required only under python 2.5).
+
 1.3.2 (2012-05-19)
 ------------------
 

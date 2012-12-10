@@ -30,6 +30,23 @@ class SignatureTest(unittest.TestCase):
             '560b3f1e09ff65167b8dc211604fed2b'
         )
 
+class IterparseTest(unittest.TestCase):
+    def test_iterparse(self):
+        data = '{"error":{"error_code":8,"error_msg":"Invalid request: this auth method is obsolete, please use oauth. vk.com\/developers","request_params":[{"key":"sig","value":"97aasff03cc81d5db25de67893e207"},{"key":"uids","value":"1,2"},{"key":"timestamp","value":"1355095295"},{"key":"v","value":"3.0"},{"key":"fields","value":"education"},{"key":"format","value":"JSON"},{"key":"random","value":"937530097"},{"key":"method","value":"getProfiles"},{"key":"api_id","value":"3267523"}]}}{"error":{"error_code":8,"error_msg":"Invalid request: this auth method is obsolete, please use oauth. vk.com\/developers","request_params":[{"key":"sig","value":"97aasff03cc81d5db25de67893e207"},{"key":"uids","value":"1,2"},{"key":"timestamp","value":"1355095295"},{"key":"v","value":"3.0"},{"key":"fields","value":"education"},{"key":"format","value":"JSON"},{"key":"random","value":"937530097"},{"key":"method","value":"getProfiles"},{"key":"api_id","value":"3267523"}]}}{"response":[{"uid":1,"first_name":"Павел","last_name":"Дуров","university":1,"university_name":"СПбГУ","faculty":15,"faculty_name":"Филологический","graduation":2006},{"uid":2,"first_name":"Александра","last_name":"Владимирова"}]}'
+        parses = list(vkontakte.api._json_iterparse(data))
+        self.assertEqual(len(parses),  3)
+        assert "error" in parses[0]
+        assert "error" in parses[1]
+        self.assertEqual(parses[2]["response"][0]["first_name"], u"Павел")
+
+    def test_iterparse_edge(self):
+        data = '{"error": {"}{": "foo"}}{"foo":"bar"}'
+        parses = list(vkontakte.api._json_iterparse(data))
+        self.assertEqual(parses[0]["error"]["}{"], "foo")
+        self.assertEqual(parses[1]["foo"], "bar")
+
+
+
 class VkontakteMagicTest(unittest.TestCase):
 
     def setUp(self):
