@@ -1,0 +1,8 @@
+[report]
+exclude_lines =
+    def __repr__
+    def __unicode__
+    def parse_args
+    pragma: no cover
+    raise NotImplementedError
+    if __name__ == .__main__.:

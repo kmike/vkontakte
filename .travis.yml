@@ -1,0 +1,18 @@
+language: python
+python:
+  - "2.7"
+install:
+  - pip install -q mock --use-mirrors
+  - pip install -q coveralls --use-mirrors
+  - pip install -q . --use-mirrors
+script:
+  - coverage run --source=vkontakte ./vkontakte/tests.py
+after_success:
+  - coveralls
+notifications:
+  email:
+    recipients:
+      - kmike84@gmail.com
+      - ramusus@gmail.com
+    on_success: change
+    on_failure: change

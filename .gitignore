@@ -2,3 +2,4 @@ dist
 MANIFEST
 *.pyc
 vkontakte.egg-info
+.coverage

@@ -2,6 +2,9 @@
 vkontakte
 =========
 
+.. image:: https://travis-ci.org/kmike/vkontakte.png?branch=master
+   :target: https://travis-ci.org/kmike/vkontakte
+
 This is a vk.com (aka vkontakte.ru, largest Russian social network)
 python API wrapper. The goal is to support all API methods (current and future)
 that can be accessed from server.
