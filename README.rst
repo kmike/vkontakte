@@ -4,6 +4,8 @@ vkontakte
 
 .. image:: https://travis-ci.org/kmike/vkontakte.png?branch=master
    :target: https://travis-ci.org/kmike/vkontakte
+.. image:: https://coveralls.io/repos/kmike/vkontakte/badge.png?branch=master
+   :target: https://coveralls.io/r/kmike/vkontakte
 
 This is a vk.com (aka vkontakte.ru, largest Russian social network)
 python API wrapper. The goal is to support all API methods (current and future)
