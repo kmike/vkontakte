@@ -2,13 +2,13 @@
 import random
 import time
 import urllib
-import re
+import warnings
 from hashlib import md5
 from functools import partial
 try:
-    import json
-except ImportError:
     import simplejson as json
+except ImportError:
+    import json
 from vkontakte import http
 
 API_URL = 'http://api.vk.com/api.php'
@@ -18,11 +18,13 @@ REQUEST_ENCODING = 'utf8'
 
 
 # See full list of VK API methods here:
-# http://vkontakte.ru/developers.php?o=-1&p=%D0%A0%D0%B0%D1%81%D1%88%D0%B8%D1%80%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5_%D0%BC%D0%B5%D1%82%D0%BE%D0%B4%D1%8B_API&s=0
+# http://vk.com/developers.php?o=-1&p=%D0%A0%D0%B0%D1%81%D1%88%D0%B8%D1%80%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5_%D0%BC%D0%B5%D1%82%D0%BE%D0%B4%D1%8B_API&s=0
+# http://vk.com/developers.php?o=-1&p=%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BC%D0%B5%D1%82%D0%BE%D0%B4%D0%BE%D0%B2_API&s=0
 COMPLEX_METHODS = ['secure', 'ads', 'messages', 'likes', 'friends',
     'groups', 'photos', 'wall', 'newsfeed', 'notifications', 'audio',
     'video', 'docs', 'places', 'storage', 'notes', 'pages',
-    'activity', 'offers', 'questions', 'subscriptions']
+    'activity', 'offers', 'questions', 'subscriptions',
+    'users', 'status', 'polls', 'account', 'auth', 'stats']
 
 
 class VKError(Exception):
@@ -55,6 +57,13 @@ def _encode(s):
 
     return s # this can be number, etc.
 
+def _json_iterparse(response):
+    response = response.strip()
+    decoder = json.JSONDecoder(encoding="utf8", strict=False)
+    idx = 0
+    while idx < len(response):
+        obj, idx = decoder.raw_decode(response, idx)
+        yield obj
 
 def signature(api_secret, params):
     keys = sorted(params.keys())
@@ -90,10 +99,17 @@ class _API(object):
                 'request_params': kwargs,
             })
 
-        data = json.loads(response, strict=False)
-        if "error" in data:
-            raise VKError(data["error"])
-        return data['response']
+        # there may be a response after errors
+        errors = []
+        for data in _json_iterparse(response):
+            if "error" in data:
+                errors.append(data["error"])
+            if "response" in data:
+                for error in errors:
+                    warnings.warn("%s" % error)
+                return data["response"]
+
+        raise VKError(errors[0])
 
     def __getattr__(self, name):
         '''
