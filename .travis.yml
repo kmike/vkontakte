@@ -4,6 +4,7 @@ python:
   - "2.7"
   - "pypy"
 install:
+  - if [[ $TRAVIS_PYTHON_VERSION == "2.6" ]]; then pip install -q --use-mirrors simplejson; fi
   - pip install -q mock>=0.7.2 --use-mirrors
   - pip install -q coveralls --use-mirrors
   - pip install -q . --use-mirrors
