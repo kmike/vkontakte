@@ -58,7 +58,7 @@ def _encode(s):
     return s # this can be number, etc.
 
 def _json_iterparse(response):
-    response = response.strip()
+    response = response.strip().decode('utf8', errors='ignore').encode('utf8')
     decoder = json.JSONDecoder(encoding="utf8", strict=False)
     idx = 0
     while idx < len(response):
