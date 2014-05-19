@@ -24,7 +24,7 @@ COMPLEX_METHODS = ['secure', 'ads', 'messages', 'likes', 'friends',
     'groups', 'photos', 'wall', 'newsfeed', 'notifications', 'audio',
     'video', 'docs', 'places', 'storage', 'notes', 'pages',
     'activity', 'offers', 'questions', 'subscriptions',
-    'users', 'status', 'polls', 'account', 'auth', 'stats']
+    'users', 'status', 'polls', 'account', 'auth', 'stats', 'database']
 
 
 class VKError(Exception):
