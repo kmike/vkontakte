@@ -12,7 +12,7 @@ except ImportError:
 from vkontakte import http
 
 API_URL = 'http://api.vk.com/api.php'
-SECURE_API_URL = 'https://api.vkontakte.ru/method/'
+SECURE_API_URL = 'https://api.vk.com/method/'
 DEFAULT_TIMEOUT = 1
 REQUEST_ENCODING = 'utf8'
 
@@ -138,7 +138,7 @@ class _API(object):
             kwargs[key] = _encode(value)
 
         if self.token:
-            # http://vkontakte.ru/developers.php?oid=-1&p=Выполнение_запросов_к_API
+            # https://vk.com/dev/api_requests
             params = dict(
                 access_token=self.token,
             )
