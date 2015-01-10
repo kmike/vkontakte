@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from distutils.core import setup
 
-version='1.3.2'
+version = '1.3.3'
 
 setup(
     name='vkontakte',
@@ -12,10 +12,10 @@ setup(
     packages=['vkontakte'],
 
     url='http://bitbucket.org/kmike/vkontakte/',
-    license = 'MIT license',
-    description = "vk.com (aka vkontakte.ru) API wrapper",
+    license='MIT license',
+    description="vk.com (aka vkontakte.ru) API wrapper",
 
-    long_description = open('README.rst').read() + open('CHANGES.rst').read(),
+    long_description=open('README.rst').read() + open('CHANGES.rst').read(),
 
     classifiers=[
         'Development Status :: 4 - Beta',
