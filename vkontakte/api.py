@@ -123,9 +123,9 @@ class _API(object):
         raise VKError(errors[0])
 
     def __getattr__(self, name):
-        '''
+        """
         Support for api.<method>.<methodName> syntax
-        '''
+        """
         if name in COMPLEX_METHODS:
             api = _API(api_id=self.api_id, api_secret=self.api_secret, token=self.token, **self.defaults)
             api.method_prefix = name + '.'

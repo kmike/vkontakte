@@ -1,22 +1,21 @@
 #!/usr/bin/env python
 from distutils.core import setup
 
-version = '1.3.3'
+version = '1.3.4'
 
 setup(
     name='vkontakte',
     version=version,
     author='Mikhail Korobov',
     author_email='kmike84@gmail.com',
-
     packages=['vkontakte'],
-
     url='http://bitbucket.org/kmike/vkontakte/',
     license='MIT license',
     description="vk.com (aka vkontakte.ru) API wrapper",
-
     long_description=open('README.rst').read() + open('CHANGES.rst').read(),
-
+    install_requires=[
+      'six',
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
