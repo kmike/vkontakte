@@ -5,6 +5,7 @@ import random
 import time
 import urllib
 import warnings
+import six
 
 from vkontakte import http
 try:
@@ -145,7 +146,7 @@ class _API(object):
 
     def _request(self, method, timeout=DEFAULT_TIMEOUT, **kwargs):
 
-        for key, value in kwargs.iteritems():
+        for key, value in six.iteritems(kwargs):
             kwargs[key] = _encode(value)
 
         if self.token:
